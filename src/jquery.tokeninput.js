@@ -6,6 +6,9 @@
  * Licensed jointly under the GPL and MIT licenses,
  * choose which one suits your project best!
  *
+ * 2015
+ * Fork by Orakaro
+ * Disable cursor movement (insertAfter mad insertBefore)
  */
 ;(function ($) {
   var DEFAULT_SETTINGS = {
@@ -660,7 +663,7 @@
 
               if(found_existing_token) {
                   select_token(found_existing_token);
-                  input_token.insertAfter(found_existing_token);
+                  // input_token.insertAfter(found_existing_token);
                   focusWithTimeout(input_box);
                   return;
               }
@@ -709,10 +712,10 @@
           selected_token = null;
 
           if(position === POSITION.BEFORE) {
-              input_token.insertBefore(token);
+              // input_token.insertBefore(token);
               selected_token_index--;
           } else if(position === POSITION.AFTER) {
-              input_token.insertAfter(token);
+              // input_token.insertAfter(token);
               selected_token_index++;
           } else {
               input_token.appendTo(token_list);
