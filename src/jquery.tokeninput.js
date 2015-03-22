@@ -130,6 +130,8 @@
 
   var HTML_ESCAPE_CHARS = /[&<>"'\/]/g;
 
+  var LAST_RESULT = {}
+
   function coerceToString(val) {
     return String((val === null || val === undefined) ? '' : val);
   }
@@ -290,7 +292,7 @@
                         next_token = input_token.next();
 
                         if((previous_token.length && previous_token.get(0) === selected_token) ||
-						   (next_token.length && next_token.get(0) === selected_token)) {
+               (next_token.length && next_token.get(0) === selected_token)) {
                             // Check if there is a previous/next token and it is selected
                             if(event.keyCode === KEY.LEFT || event.keyCode === KEY.UP) {
                                 deselect_token($(selected_token), POSITION.BEFORE);
@@ -596,6 +598,13 @@
             }
             var object = {};
             object[$(input).data("settings").tokenValue] = object[$(input).data("settings").propertyToSearch] = token;
+            var existingCount = 0;
+            $.each(excludeCurrent(LAST_RESULT), function(index, value) {
+              if (token == value[$(input).data("settings").tokenValue]) {
+                existingCount = value['count'];
+              }
+            });
+            object['count'] = existingCount;
             add_token(object);
           });
       }
@@ -979,7 +988,8 @@
               if ($.isFunction($(input).data("settings").onCachedResult)) {
                 cached_results = $(input).data("settings").onCachedResult.call(hiddenInput, cached_results);
               }
-              populateDropdown(query, cached_results);
+              LAST_RESULT = cached_results;
+              populateDropdown(query, LAST_RESULT);
           } else {
               // Are we doing an ajax search or local data search?
               if($(input).data("settings").url) {
@@ -1031,7 +1041,8 @@
 
                     // only populate the dropdown if the results are associated with the active search query
                     if(input_box.val() === query) {
-                        populateDropdown(query, $(input).data("settings").jsonContainer ? results[$(input).data("settings").jsonContainer] : results);
+                        LAST_RESULT = $(input).data("settings").jsonContainer ? results[$(input).data("settings").jsonContainer] : results;
+                        populateDropdown(query, LAST_RESULT);
                     }
                   };
 
@@ -1052,7 +1063,8 @@
                   if($.isFunction($(input).data("settings").onResult)) {
                       results = $(input).data("settings").onResult.call(hiddenInput, results);
                   }
-                  populateDropdown(query, results);
+                  LAST_RESULT = results;
+                  populateDropdown(query, LAST_RESULT);
               }
           }
       }
@@ -1071,10 +1083,10 @@
       function focusWithTimeout(object) {
           setTimeout(
             function() {
-			  object.focus();
+        object.focus();
             },
-			50
-		  );
+      50
+      );
       }
   };
 
